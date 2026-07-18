@@ -71,7 +71,7 @@ export function TeamPanel({
                   aria-label={`Open or close conditions for ${pokemon?.name ?? id}`}
                   onClick={() => onEdit(id)}
                 >
-                  <PokemonSprite id={id} imageIds={imageIds} large />
+                  <PokemonSprite id={id} imageIds={imageIds} />
                   <span className="pokemon-copy">
                     <span className="pokemon-title-line">
                       <strong>{pokemon?.name ?? id}</strong>

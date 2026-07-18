@@ -32,7 +32,7 @@ export function ConditionDrawer({ side, pokemonId, species, imageIds, options, c
       {pokemonId && (
         <>
           <div className="drawer-pokemon">
-            <PokemonSprite id={pokemonId} name="" imageIds={imageIds} large />
+            <PokemonSprite id={pokemonId} name="" imageIds={imageIds} />
             <div><strong>{pokemon?.name ?? pokemonId}</strong><span>{options ? formatNumber(options.teams) : "—"} observed teams · {opponent ? "Opponent" : "My selection"}</span></div>
           </div>
           <div className="drawer-content">

@@ -4,13 +4,11 @@ interface Props {
   id: string;
   name?: string;
   imageIds: Record<string, number>;
-  large?: boolean;
 }
 
-export function PokemonSprite({ id, name = "", imageIds, large = false }: Props) {
+export function PokemonSprite({ id, name = "", imageIds }: Props) {
   const imageId = imageIds[id];
   if (!imageId) return null;
-  const folder = large ? "other/official-artwork/" : "";
-  const src = `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@${spriteVersion}/sprites/pokemon/${folder}${imageId}.png`;
+  const src = `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@${spriteVersion}/sprites/pokemon/other/official-artwork/${imageId}.png`;
   return <img src={src} alt={name} />;
 }
