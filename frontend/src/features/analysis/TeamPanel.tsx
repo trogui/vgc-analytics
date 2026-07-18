@@ -71,16 +71,18 @@ export function TeamPanel({
                   aria-label={`Open or close conditions for ${pokemon?.name ?? id}`}
                   onClick={() => onEdit(id)}
                 >
-                  <PokemonSprite id={id} imageIds={imageIds} />
+                  <PokemonSprite id={id} imageIds={imageIds} large />
                   <span className="pokemon-copy">
-                    <strong>{pokemon?.name ?? id}</strong>
-                    <span className="condition-chips">
-                      {hasConditions ? <>
-                        {condition.moves.map((move) => <MovePill key={move} move={move} className="condition-chip" />)}
-                        {condition.item && <span className="condition-chip item-chip"><ItemName item={condition.item} /></span>}
-                        {condition.ability && <span className="condition-chip">{condition.ability}</span>}
-                      </> : <span className="condition-chip empty">No conditions</span>}
+                    <span className="pokemon-title-line">
+                      <strong>{pokemon?.name ?? id}</strong>
+                      {condition.item && <span className="condition-chip item-chip"><ItemName item={condition.item} /></span>}
+                      {condition.ability && <span className="condition-chip">{condition.ability}</span>}
                     </span>
+                    {(condition.moves.length || !hasConditions) && <span className="condition-chips">
+                      {condition.moves.length
+                        ? condition.moves.map((move) => <MovePill key={move} move={move} className="condition-chip" />)
+                        : <span className="condition-chip empty">No conditions</span>}
+                    </span>}
                   </span>
                 </button>
                 <button className="remove" type="button" aria-label={`Remove ${pokemon?.name ?? id}`} onClick={() => onRemove(id)}>Remove</button>

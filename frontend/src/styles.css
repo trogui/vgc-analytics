@@ -219,6 +219,9 @@ main { max-width: 1800px; margin: 0 auto; padding: 24px 20px 48px; }
 .pokemon-open img { width: 48px; height: 48px; margin-left: 4px; object-fit: contain; }
 .pokemon-copy { min-width: 0; padding: 8px 10px; }
 .pokemon-copy strong { display: block; font-size: 14px; font-weight: 700; }
+.pokemon-title-line { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; }
+.pokemon-title-line strong { margin-right: 3px; }
+.pokemon-title-line .condition-chip { padding: 2px 6px; font-size: 9px; }
 .condition-chips {
   display: flex;
   flex-wrap: wrap;

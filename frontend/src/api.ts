@@ -53,7 +53,7 @@ export const api = {
   species: (minPlayers: number) => request<Species[]>(`/api/species?min_players=${minPlayers}`),
   pokemonOptions: (id: string, minPlayers: number) =>
     request<PokemonOptions>(`/api/species/${encodeURIComponent(id)}/options?min_players=${minPlayers}`),
-  pokemonImages: () => request<Record<string, number>>("/static/pokemon-images.json"),
+  pokemonImages: () => request<Record<string, number>>(`${import.meta.env.BASE_URL}pokemon-images.json`),
   analyze: (query: AnalysisRequest) => jsonPost<AnalysisResult>("/api/analyze", query),
   searchTeams: (query: TeamSearchRequest) => jsonPost<TeamSearchResponse>("/api/teams/search", query),
   refresh: () => jsonPost<Record<string, unknown>>("/api/refresh"),

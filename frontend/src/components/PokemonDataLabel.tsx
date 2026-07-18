@@ -7,7 +7,7 @@ export function MovePill({ move, className = "" }: { move: string; className?: s
   const style = type ? { "--move-color": TYPE_COLORS[type] } as CSSProperties : undefined;
   return (
     <span className={`move-pill${type ? " has-type" : ""}${className ? ` ${className}` : ""}`} style={style}>
-      {type && <img className="move-type-icon" src={`/static/type-icons/${type.toLowerCase()}.png`} alt="" title={type} />}
+      {type && <img className="move-type-icon" src={`${import.meta.env.BASE_URL}type-icons/${type.toLowerCase()}.png`} alt="" title={type} />}
       {move}
     </span>
   );
