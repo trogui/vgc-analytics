@@ -17,12 +17,13 @@ naturaleza.
 
 ## Abrir la aplicación
 
-En macOS, haz doble clic en `run.command`. También se puede ejecutar:
+Para abrir la aplicación completa con un solo comando:
 
 ```bash
-uv sync
-uv run vgc-analytics serve --database data/vgc_mb.duckdb --open
+./run.command
 ```
+
+En macOS también puedes abrir `run.command` con doble clic.
 
 La aplicación se abre en `http://127.0.0.1:8765`. El botón **Refresh** busca
 torneos nuevos, descarga `details`, `standings` y `pairings`, y solo ingiere los
@@ -55,13 +56,11 @@ La interfaz está implementada con React, TypeScript y Vite. FastAPI continúa
 sirviendo la API y el build de producción como una única aplicación.
 
 ```bash
-# Terminal 1
-uv run vgc-analytics serve --database data/vgc_mb.duckdb
-
-# Terminal 2
-cd frontend
-npm run dev
+./dev.command
 ```
+
+El script prepara las dependencias, levanta FastAPI y abre Vite con recarga
+automática. `Ctrl+C` detiene ambos procesos.
 
 Antes de publicar cambios del frontend, genera los assets versionados que
 FastAPI sirve desde el paquete Python:
