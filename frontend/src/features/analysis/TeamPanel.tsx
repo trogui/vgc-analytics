@@ -1,5 +1,6 @@
-import type { PokemonCondition, Side, Species } from "../../types";
+import { ItemName, MovePill } from "../../components/PokemonDataLabel";
 import { PokemonSprite } from "../../components/PokemonSprite";
+import type { PokemonCondition, Side, Species } from "../../types";
 
 interface Props {
   side: Side;
@@ -51,9 +52,8 @@ export function TeamPanel({
           {team.map((id) => {
             const pokemon = byId.get(id);
             const enabled = !disabled.includes(id);
-            const values = conditions[id]
-              ? [...conditions[id].moves, conditions[id].item, conditions[id].ability].filter(Boolean) as string[]
-              : [];
+            const condition = conditions[id] ?? { moves: [], item: null, ability: null };
+            const hasConditions = Boolean(condition.moves.length || condition.item || condition.ability);
             return (
               <article key={id} className={`pokemon-row${enabled ? "" : " is-disabled"}`}>
                 <input
@@ -75,9 +75,11 @@ export function TeamPanel({
                   <span className="pokemon-copy">
                     <strong>{pokemon?.name ?? id}</strong>
                     <span className="condition-chips">
-                      {values.length
-                        ? values.map((value) => <span key={value} className="condition-chip">{value}</span>)
-                        : <span className="condition-chip empty">No conditions</span>}
+                      {hasConditions ? <>
+                        {condition.moves.map((move) => <MovePill key={move} move={move} className="condition-chip" />)}
+                        {condition.item && <span className="condition-chip item-chip"><ItemName item={condition.item} /></span>}
+                        {condition.ability && <span className="condition-chip">{condition.ability}</span>}
+                      </> : <span className="condition-chip empty">No conditions</span>}
                     </span>
                   </span>
                 </button>

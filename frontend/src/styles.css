@@ -237,6 +237,15 @@ main { max-width: 1800px; margin: 0 auto; padding: 24px 20px 48px; }
   letter-spacing: .02em;
 }
 .condition-chip.empty { border-color: var(--line); background: #f9fafb; color: var(--muted); text-transform: none; }
+.move-pill.has-type {
+  border-color: color-mix(in srgb,var(--move-color) 55%,white);
+  background: color-mix(in srgb,var(--move-color) 18%,white);
+  color: #1f2937;
+}
+.move-type-icon, .item-icon { width: 14px; height: 14px; flex: 0 0 auto; object-fit: contain; }
+.move-pill, .item-chip, .team-set-card dd, .team-set-value del, .team-set-value ins { align-items: center; gap: 4px; }
+.move-pill, .item-chip, .team-set-value del, .team-set-value ins { display: inline-flex; }
+.pokemon-open img.move-type-icon, .pokemon-open img.item-icon { width: 14px; height: 14px; margin: 0; }
 .member-toggle {
   position: absolute;
   z-index: 1;
@@ -661,13 +670,14 @@ select:focus, input:focus, button:focus-visible { outline: 2px solid #93c5fd; ou
 .team-set-card dt, .team-set-card dd { overflow: hidden; margin: 0; font-size: 8px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
 .team-set-card dt { color: var(--muted); }
 .team-set-value.changed dd { display: flex; gap: 4px; }
+.team-set-card dd { display: flex; }
 .team-set-value del, .team-moves del { color: var(--muted); text-decoration-color: var(--danger); }
 .team-set-value ins, .team-moves ins { color: var(--positive); font-weight: 700; text-decoration: none; }
 .team-set-value del::after, .team-moves del::after { content: " →"; color: var(--muted); text-decoration: none; }
 .team-moves { display: grid; gap: 3px; }
-.team-moves span { overflow: hidden; padding: 4px 5px; border: 1px solid #e5e7eb; border-radius: 4px; background: #f9fafb; font-size: 8px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
-.team-moves span.match { border-color: #bfdbfe; background: var(--accent-soft); color: var(--accent); font-weight: 700; }
-.team-moves span.changed { border-color: #d1d5db; background: #fff; }
+.team-moves > span { overflow: hidden; padding: 4px 5px; border: 1px solid #e5e7eb; border-radius: 4px; background: #f9fafb; font-size: 8px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.team-moves .move-pill.match { box-shadow: inset 0 0 0 1px #fff, 0 0 0 1px var(--accent); font-weight: 700; }
+.team-moves > span.changed { border-color: #d1d5db; background: #fff; }
 #team-condition-dialog {
   width: min(440px,calc(100vw - 28px));
   max-height: min(720px,calc(100vh - 28px));
