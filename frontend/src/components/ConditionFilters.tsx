@@ -18,7 +18,8 @@ interface GroupProps {
 
 function FilterGroup({ title, type, options, selected, multiple = false, expandable = false, onToggle, onClear }: GroupProps) {
   const [expanded, setExpanded] = useState(false);
-  const visible = expandable && !expanded ? options.slice(0, 6) : options;
+  const previewLimit = type === "item" ? 3 : 6;
+  const visible = expandable && !expanded ? options.slice(0, previewLimit) : options;
   return (
     <section className="filter-group">
       <div className="filter-group-header"><strong>{title}</strong><button type="button" disabled={!selected.length} onClick={onClear}>Clear</button></div>
@@ -39,9 +40,9 @@ function FilterGroup({ title, type, options, selected, multiple = false, expanda
           </label>
         );
       })}
-      {expandable && options.length > 6 && (
+      {expandable && options.length > previewLimit && (
         <button className="show-more" type="button" onClick={() => setExpanded((value) => !value)}>
-          {expanded ? "Show less" : `Show more (${options.length - 6})`}
+          {expanded ? "Show less" : `Show more (${options.length - previewLimit})`}
         </button>
       )}
     </section>
