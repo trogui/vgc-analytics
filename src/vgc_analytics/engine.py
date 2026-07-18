@@ -379,18 +379,25 @@ class AnalyticsEngine:
         conditions.extend(_team_conditions("ms.own_entry_id", query.own, parameters))
         conditions.extend(_team_conditions("ms.opponent_entry_id", query.opponent, parameters))
         conditions.extend(_tournament_conditions(query.tournaments, parameters))
-        if query.mirrors == "exclude_own_core" and query.own.contains:
-            placeholders = _in_clause(query.own.contains, parameters)
-            conditions.append(f"""
-                (SELECT COUNT(*) FROM team_pokemon mirror
-                 WHERE mirror.entry_id = ms.opponent_entry_id
-                   AND mirror.pokemon_id IN ({placeholders})) < ?
-            """)
-            parameters.append(len(query.own.contains))
+        if query.mirrors == "exclude_own_core":
+            for core, opposite_entry in (
+                (query.own.contains, "ms.opponent_entry_id"),
+                (query.opponent.contains, "ms.own_entry_id"),
+            ):
+                if not core:
+                    continue
+                placeholders = _in_clause(core, parameters)
+                conditions.append(f"""
+                    (SELECT COUNT(*) FROM team_pokemon mirror
+                     WHERE mirror.entry_id = {opposite_entry}
+                       AND mirror.pokemon_id IN ({placeholders})) < ?
+                """)
+                parameters.append(len(core))
 
         where = " AND ".join(f"({condition})" for condition in conditions)
         sql = f"""
-            SELECT COUNT(*),
+            SELECT COUNT(DISTINCT ms.match_id),
+                   COUNT(DISTINCT CASE WHEN ms.outcome = 'T' THEN ms.match_id END),
                    count_if(ms.outcome = 'W'),
                    count_if(ms.outcome = 'L'),
                    count_if(ms.outcome = 'T')
@@ -399,7 +406,7 @@ class AnalyticsEngine:
             WHERE {where}
         """
         with connect(self.database_path, read_only=True) as connection:
-            matches, wins, losses, ties = connection.execute(sql, parameters).fetchone()
+            matches, tie_matches, wins, losses, ties = connection.execute(sql, parameters).fetchone()
             scope_parameters: list[object] = []
             scope_conditions = ["ms.competitive", "ms.analyzable"]
             scope_conditions.extend(_tournament_conditions(query.tournaments, scope_parameters))
@@ -414,7 +421,7 @@ class AnalyticsEngine:
         decisive = wins + losses
         return {
             "scope": {"tournaments": scope_tournaments, "matches": scope_matches},
-            "sample": {"matches": matches},
+            "sample": {"matches": matches, "tie_matches": tie_matches},
             "record": {"wins": wins, "losses": losses, "ties": ties},
             "metrics": {"decisive_win_rate": wins / decisive if decisive else None},
         }

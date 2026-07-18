@@ -45,7 +45,7 @@ export interface RecordSummary {
 
 export interface AnalysisResult {
   scope: { tournaments: number; matches: number };
-  sample: { matches: number };
+  sample: { matches: number; tie_matches?: number };
   record: RecordSummary;
   metrics: { decisive_win_rate: number | null };
 }

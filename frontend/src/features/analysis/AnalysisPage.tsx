@@ -158,6 +158,7 @@ export function AnalysisPage() {
     />
   );
 
+  const emptyAnalysis = !sides.some((side) => activeTeam(state, side).length || state.excludes[side].length);
   const status = catalogError
     ?? (loading ? "Loading dataset…" : result
       ? `${formatNumber(result.scope.tournaments)} tournaments · ${formatNumber(result.scope.matches)} matches`
@@ -205,9 +206,9 @@ export function AnalysisPage() {
           />
           <div id="analysis-grid" className={`analysis-grid ${state.mode}`}>
             {teamPanel("own")}
-            {state.mode === "versus" && <ResultsPanel result={result} busy={busy} showTies={settings.showTies} />}
+            {state.mode === "versus" && <ResultsPanel result={result} busy={busy} showTies={settings.showTies} empty={emptyAnalysis} />}
             {state.mode === "versus" && teamPanel("opponent")}
-            {state.mode === "basic" && <ResultsPanel result={result} busy={busy} showTies={settings.showTies} />}
+            {state.mode === "basic" && <ResultsPanel result={result} busy={busy} showTies={settings.showTies} empty={emptyAnalysis} />}
           </div>
           <ConditionDrawer
             side="opponent"

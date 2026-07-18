@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from itertools import product
+
 import pytest
 
 from vgc_analytics.database import connect
@@ -21,7 +23,7 @@ def test_basculegion_overall(database):
         AnalysisQuery(own=TeamFilter(contains=["basculegion"]))
     )
     assert result["record"] == {"wins": 2, "losses": 2, "ties": 1}
-    assert result["sample"]["matches"] == sum(result["record"].values()) == 5
+    assert result["sample"] == {"matches": 4, "tie_matches": 1}
     assert result["metrics"]["decisive_win_rate"] == 0.5
 
 
@@ -49,6 +51,58 @@ def test_core_against_core(database):
     ))
     assert result["record"] == {"wins": 1, "losses": 0, "ties": 0}
     assert result["sample"]["matches"] == 1
+
+
+def test_swapping_sides_preserves_samples_and_reverses_outcomes(database):
+    engine = AnalyticsEngine(database)
+    filters = [
+        TeamFilter(),
+        TeamFilter(contains=["basculegion"]),
+        TeamFilter(contains=["tyranitar", "excadrill"]),
+        TeamFilter(contains=["charizard"], excludes=["basculegion"]),
+        TeamFilter(
+            contains=["basculegion"],
+            conditions=[{
+                "pokemon_id": "basculegion",
+                "moves": ["Protect"],
+                "item": "Basculegionite",
+                "ability": "Test Ability",
+            }],
+        ),
+    ]
+    for own, opponent, mirrors, min_players in product(
+        filters, filters, ("include", "exclude_own_core"), (1, 21),
+    ):
+        query = AnalysisQuery(
+            own=own,
+            opponent=opponent,
+            mirrors=mirrors,
+            tournaments=TournamentFilter(min_players=min_players),
+        )
+        swapped = query.model_copy(update={"own": opponent, "opponent": own})
+        result = engine.analyze(query)
+        inverse = engine.analyze(swapped)
+        context = query.model_dump()
+
+        assert result["scope"] == inverse["scope"], context
+        assert result["sample"] == inverse["sample"], context
+        assert result["sample"]["matches"] <= result["scope"]["matches"], context
+        assert result["sample"]["tie_matches"] <= result["sample"]["matches"], context
+        assert result["sample"]["tie_matches"] <= result["record"]["ties"] <= 2 * result["sample"]["tie_matches"], context
+        assert sum(result["record"].values()) <= 2 * result["sample"]["matches"], context
+        assert result["record"] == {
+            "wins": inverse["record"]["losses"],
+            "losses": inverse["record"]["wins"],
+            "ties": inverse["record"]["ties"],
+        }, context
+        win_rate = result["metrics"]["decisive_win_rate"]
+        inverse_win_rate = inverse["metrics"]["decisive_win_rate"]
+        decisive = result["record"]["wins"] + result["record"]["losses"]
+        if win_rate is None:
+            assert decisive == 0 and inverse_win_rate is None, context
+        else:
+            assert win_rate == pytest.approx(result["record"]["wins"] / decisive), context
+            assert win_rate + inverse_win_rate == pytest.approx(1), context
 
 
 def test_basic_team_search_returns_six_pokemon_compositions(database):
@@ -117,7 +171,7 @@ def test_core_keys_are_order_independent():
 
 def test_double_losses_byes_and_unknown_teams_are_excluded(database):
     result = AnalyticsEngine(database).analyze(AnalysisQuery())
-    assert result["sample"]["matches"] == 8
+    assert result["sample"] == {"matches": 4, "tie_matches": 1}
     assert result["record"] == {"wins": 3, "losses": 3, "ties": 2}
 
 
