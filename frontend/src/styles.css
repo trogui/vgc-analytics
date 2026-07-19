@@ -713,30 +713,92 @@ select:focus, input:focus, button:focus-visible { outline: 2px solid #93c5fd; ou
   .analysis-grid.versus { grid-template-columns: minmax(0,1fr) 240px minmax(0,1fr); }
 }
 @media (max-width: 1100px) {
+  body:has(.analysis-shell) { height: auto; overflow: auto; }
+  main:has(.analysis-shell) { height: auto; min-height: calc(100vh - 56px); overflow: visible; }
   .analysis-shell, .analysis-shell:has(#condition-drawer-own[aria-hidden="false"]), .analysis-shell:has(#condition-drawer-opponent[aria-hidden="false"]), .analysis-shell:has(#condition-drawer-own[aria-hidden="false"]):has(#condition-drawer-opponent[aria-hidden="false"]) { grid-template-columns: 1fr; }
-  .analysis-grid.basic, .analysis-grid.versus { grid-template-columns: 1fr; }
-  .analysis-grid.versus .results { order: 3; }
-  .results { position: static; }
-  .condition-drawer { position: absolute; top: 0; bottom: 0; left: 0; z-index: 5; width: 0; height: 100%; max-height: 100%; }
-  .condition-drawer.right { right: 0; left: auto; }
-  .condition-drawer[aria-hidden="false"] { width: min(320px,100%); }
+  .analysis-grid.basic, .analysis-grid.versus { grid-template-columns: 1fr; max-height: none; overflow: visible; }
+  .analysis-grid .results { order: -1; position: sticky; top: 64px; z-index: 4; box-shadow: 0 8px 20px rgba(15,23,42,.1); }
+  .result-summary { grid-template-columns: minmax(120px,1.4fr) 1fr 1fr; }
+  .result-primary { padding: 13px 16px; border-right: 1px solid var(--line); border-bottom: 0; }
+  .result-primary strong { font-size: 32px; }
+  .result-row { display: grid; place-content: center; padding: 10px 12px; text-align: center; }
+  .result-row strong { margin: 3px 0 0; }
+  .condition-drawer { position: fixed; inset: auto 0 0; z-index: 80; width: 100%; height: 0; max-height: 0; border-radius: 14px 14px 0 0; box-shadow: 0 -16px 40px rgba(15,23,42,.18); transition: max-height 220ms cubic-bezier(.2,.8,.2,1), opacity 140ms ease, visibility 0s linear 220ms; }
+  .condition-drawer.right { right: 0; left: 0; }
+  .condition-drawer[aria-hidden="false"] { width: 100%; height: auto; max-height: min(78vh,720px); }
   .condition-drawer > * { width: 100%; }
 }
 @media (max-width: 650px) {
-  .app-bar { padding: 0 13px; }
-  .app-nav { margin-left: 8px; }
-  .app-nav a { padding: 0 7px; font-size: 11px; }
+  body { padding-bottom: calc(58px + env(safe-area-inset-bottom)); }
+  .app-bar { height: 54px; padding: 0 12px; }
+  .app-bar > strong { max-width: 124px; font-size: 13px; line-height: 1.1; }
+  .app-nav {
+    position: fixed;
+    z-index: 70;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: calc(58px + env(safe-area-inset-bottom));
+    margin: 0;
+    padding: 0 10px env(safe-area-inset-bottom);
+    border-top: 1px solid var(--line);
+    background: rgba(255,255,255,.96);
+    box-shadow: 0 -5px 18px rgba(15,23,42,.07);
+    backdrop-filter: blur(12px);
+  }
+  .app-nav a { flex: 1; justify-content: center; padding: 0 10px; border-top: 2px solid transparent; border-bottom: 0; font-size: 12px; }
+  .app-nav a.active { border-top-color: var(--accent); border-bottom-color: transparent; }
   .dataset-actions span { display: none; }
-  .dataset-actions { gap: 10px; }
-  main { padding: 16px 12px 36px; }
+  .dataset-actions { gap: 6px; }
+  .dataset-actions button { height: 32px; padding: 0 10px; font-size: 11px; }
+  main { padding: 14px 10px 28px; }
+  main:has(.analysis-shell) { min-height: calc(100vh - 112px); padding-bottom: 18px; }
   .view-header { display: grid; gap: 12px; }
-  .view-actions { justify-content: space-between; }
+  .view-header h1 { font-size: 20px; }
+  .view-actions { display: grid; grid-template-columns: auto minmax(0,1fr); }
+  .view-actions .mode-switch { width: 100%; }
+  .mode-switch button { flex: 1; min-width: 0; }
+  .analysis-grid { gap: 10px; }
+  .analysis-grid .results { top: 60px; }
+  .results .panel-header { display: none; }
+  .result-primary { padding: 10px 12px; }
+  .result-primary span, .result-row span { font-size: 9px; }
+  .result-primary strong { font-size: 28px; }
+  .result-row { padding: 8px; }
+  .result-row strong { font-size: 13px; }
+  .result-empty { padding: 13px 14px; }
+  .panel-header { min-height: 42px; }
+  .panel-body { padding: 10px; }
+  .pokemon-roster { gap: 8px; }
+  .pokemon-row { min-height: 64px; }
+  .pokemon-open { min-height: 62px; grid-template-columns: 46px minmax(0,1fr); padding-right: 52px; }
+  .pokemon-open img { width: 42px; height: 42px; }
+  .pokemon-copy { padding: 6px 8px; }
+  .pokemon-row > .remove { right: 6px; }
   .pokemon-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .picker-toolbar { grid-template-columns: 1fr; }
+  #pokemon-picker, #team-condition-dialog, #settings-dialog {
+    width: 100%;
+    max-width: none;
+    margin: auto 0 0;
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 16px 16px 0 0;
+  }
+  #pokemon-picker { height: min(82vh,680px); }
+  #team-condition-dialog { max-height: 82vh; }
+  #settings-dialog { width: 100%; }
   .team-view-header { display: block; }
+  .team-view-header h1 { font-size: 20px; }
   .team-view-header > span { display: block; margin-top: 8px; }
   .search-mode-switch { grid-template-columns: 1fr; }
   .search-mode-switch > button + button { border-top: 1px solid var(--line); border-left: 0; }
+  .team-query-body { padding: 12px; }
+  .team-selection { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); min-height: 0; }
+  .team-selected-pokemon, .team-add-pokemon { width: 100%; min-width: 0; min-height: 64px; }
+  .team-selected-pokemon { grid-template-columns: 42px minmax(0,1fr); padding-left: 6px; }
+  .team-selected-pokemon img { width: 40px; height: 40px; }
   .team-query-actions { align-items: stretch; flex-wrap: wrap; }
   .team-query-actions p { width: 100%; }
   .team-query-actions button { flex: 1; }
@@ -753,6 +815,13 @@ select:focus, input:focus, button:focus-visible { outline: 2px solid #93c5fd; ou
   .team-sheet-details { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .team-set-card:nth-child(odd) { border-left: 0; }
   .team-set-card:nth-child(n+3) { border-top: 1px solid var(--line); }
+}
+@media (max-width: 380px) {
+  .app-bar > strong { max-width: 92px; font-size: 12px; }
+  .dataset-actions button { padding: 0 8px; }
+  .team-selection { grid-template-columns: 1fr; }
+  .pokemon-grid { grid-template-columns: 1fr; }
+  .result-summary { grid-template-columns: 1.2fr 1fr 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
   .analysis-shell, .condition-drawer { transition: none; }
