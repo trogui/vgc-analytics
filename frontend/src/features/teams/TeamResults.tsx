@@ -107,7 +107,7 @@ export function TeamResults({
           const difference = exact ? compareVariants(reference, item) : { pokemon: [], changes: 0 };
           const differenceByPokemon = new Map(difference.pokemon.map((pokemon) => [pokemon.id, pokemon]));
           const relative = exact && detailMode === "relative" && !isReference;
-          const source = item.source ?? { player: null, placing: null, tournament: null };
+          const source = item.source ?? { placing: null, tournament: null };
           return (
             <article key={item.key} className={`team-sheet-result${isReference ? " is-reference" : ""}`}>
               <div
@@ -129,7 +129,7 @@ export function TeamResults({
                 {!exact && <button className="team-search-variants" type="button" onClick={(event) => { event.stopPropagation(); onOpenVariants(item); }}>Find variants</button>}
                 <span className="team-disclosure" aria-hidden="true">{opened ? "▴" : "▾"}</span>
               </div>
-              <p>{formatNumber(item.teams)}× observed · {source.tournament || "Unnamed tournament"} · {source.player || "Unnamed player"}{source.placing ? ` · ${formatNumber(source.placing)}th` : ""}</p>
+              <p>{formatNumber(item.teams)}× observed · {source.tournament || "Unnamed tournament"}{source.placing ? ` · ${formatNumber(source.placing)}th` : ""}</p>
               <div id={`team-sheet-details-${index}`} className={`team-sheet-details${relative ? " is-comparison" : ""}`} hidden={!opened}>
                 {item.pokemon.map((pokemon) => {
                   const pokemonDifference = differenceByPokemon.get(pokemon.id);

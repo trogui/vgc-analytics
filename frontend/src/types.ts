@@ -71,7 +71,7 @@ export interface TeamSearchResult {
   latest_date: string | null;
   record: RecordSummary;
   win_rate: number | null;
-  source?: { player: string | null; placing: number | null; tournament: string | null };
+  source?: { placing: number | null; tournament: string | null };
 }
 
 export interface TeamSearchResponse {

@@ -100,8 +100,19 @@ through the documented [Play Limitless tournament
 endpoints](https://docs.limitlesstcg.com/developer/tournaments). It contains 192
 public VGC Regulation M-B tournaments held between June 20 and July 18, 2026.
 The snapshot retains standings, pairings, and teamlists, but removes player
-names and countries and replaces player identifiers with tournament-local
-aliases using `scripts/anonymize_seed.py`.
+names, countries, and source account identifiers. Player references are
+replaced with tournament-local aliases using the fail-closed allowlist in
+`vgc_analytics.privacy` and `scripts/pseudonymize_seed.py`.
+
+This dataset is deliberately **pseudonymized/de-identified, not anonymous**.
+Tournament, team-list, and match-result records remain traceable to their
+public source events. Incremental synchronization applies the same sanitizer
+before writing a raw response or DuckDB row, and the API/UI never returns a
+player name, country, or source account identifier.
+
+Local databases, raw downloads, backups, or exports created before this privacy
+change may still contain direct identity fields. Remove those legacy artifacts
+and rebuild from the pseudonymized seed before using the updated application.
 
 The data comes from Play Limitless and remains subject to its [Terms of
 Service](https://play.limitlesstcg.com/tos) and [Privacy

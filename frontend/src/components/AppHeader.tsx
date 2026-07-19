@@ -38,6 +38,9 @@ export function AppHeader({
           {onRefresh && <button type="button" disabled={refreshing} onClick={onRefresh}>{refreshing ? "Refreshing…" : "Refresh"}</button>}
         </div>
       </header>
+      <p className="source-data-notice">
+        Uses public Play Limitless tournament data. Player names, countries, and source account IDs are not stored or displayed. Tournament, team-list, and match-result data remain traceable to public source events.
+      </p>
       <Modal id="settings-dialog" open={settingsOpen} onClose={() => setSettingsOpen(false)}>
         <div className="picker-header">
           <h2>Settings</h2>

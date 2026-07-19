@@ -12,8 +12,6 @@ CREATE TABLE IF NOT EXISTS entries (
     entry_id VARCHAR PRIMARY KEY,
     tournament_id VARCHAR NOT NULL,
     player_id VARCHAR NOT NULL,
-    player_name VARCHAR,
-    country VARCHAR,
     final_placing INTEGER,
     wins INTEGER,
     losses INTEGER,

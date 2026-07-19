@@ -9,7 +9,7 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
-from .database import connect
+from .database import connect, initialize
 from .engine import AnalysisQuery, AnalyticsEngine, TeamSearchQuery, TournamentFilter
 from .sync import sync_database
 
@@ -17,6 +17,8 @@ from .sync import sync_database
 def create_app(database_path: str | Path | None = None, raw_directory: str | Path | None = None) -> FastAPI:
     path = Path(database_path or os.getenv("VGC_DATABASE", "data/vgc_mb.duckdb"))
     raw_path = Path(raw_directory or os.getenv("VGC_RAW", "data/raw"))
+    if path.exists():
+        initialize(path)
     app = FastAPI(title="VGC Analytics", version="0.1.0")
     engine = AnalyticsEngine(path)
     refresh_lock = threading.Lock()

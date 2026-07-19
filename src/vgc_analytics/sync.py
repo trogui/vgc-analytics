@@ -10,6 +10,7 @@ import httpx
 
 from .database import connect, initialize
 from .ingest import canonical_json, digest, ingest_payload
+from .privacy import sanitize_tournament_payload
 
 BASE_URL = "https://play.limitlesstcg.com/api"
 RATE_RE = re.compile(r"r=(\d+);\s*t=(\d+)")
@@ -90,8 +91,7 @@ def sync_database(
     limitless: LimitlessClient | None = None,
 ) -> dict[str, Any]:
     database_path = Path(database_path)
-    if not database_path.exists():
-        initialize(database_path)
+    initialize(database_path)
     client = limitless or LimitlessClient()
     inserted: list[str] = []
     pending: list[str] = []
@@ -105,6 +105,7 @@ def sync_database(
                 "standings": client.get(f"/tournaments/{tournament_id}/standings"),
                 "pairings": client.get(f"/tournaments/{tournament_id}/pairings"),
             }
+            payload = sanitize_tournament_payload(payload)
             preserve_raw(payload, raw_directory)
             if not is_finished(payload):
                 pending.append(tournament_id)
