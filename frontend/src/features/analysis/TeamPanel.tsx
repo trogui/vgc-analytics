@@ -43,12 +43,7 @@ export function TeamPanel({
     <section id={opponent ? "opponent-panel" : undefined} className="panel selection-panel" aria-labelledby={`${side}-title`}>
       <div className="panel-header"><h2 id={`${side}-title`}>{opponent ? "Opponent Pokémon or core" : "Pokémon or core"}</h2><span>{team.length}/6</span></div>
       <div className="panel-body">
-        <div className="pokemon-roster">
-          {!team.length && (
-            <div className="empty-roster">
-              {opponent ? "No specific opponent: compare against the full sample." : "Add one or more Pokémon to analyze a core."}
-            </div>
-          )}
+        {team.length > 0 && <div className="pokemon-roster">
           {team.map((id) => {
             const pokemon = byId.get(id);
             const enabled = !disabled.includes(id);
@@ -87,7 +82,7 @@ export function TeamPanel({
               </article>
             );
           })}
-        </div>
+        </div>}
         {team.length < 6 && <button className="add-pokemon" type="button" onClick={onAdd}>+ Add {opponent ? "opponent " : ""}Pokémon</button>}
         <details className="exclude-section">
           <summary>Exclude {opponent ? "opponent " : ""}Pokémon</summary>

@@ -104,16 +104,19 @@ export function AnalysisPage() {
     conditions: { ...current.conditions, [side]: { ...current.conditions[side], [id]: condition } },
   }));
 
-  const removePokemon = (side: Side, id: string) => updateState((current) => {
-    const conditions = { ...current.conditions[side] };
-    delete conditions[id];
-    return {
-      ...current,
-      teams: { ...current.teams, [side]: current.teams[side].filter((value) => value !== id) },
-      disabled: { ...current.disabled, [side]: current.disabled[side].filter((value) => value !== id) },
-      conditions: { ...current.conditions, [side]: conditions },
-    };
-  });
+  const removePokemon = (side: Side, id: string) => {
+    setDrawerPokemon((current) => current[side] === id ? { ...current, [side]: null } : current);
+    updateState((current) => {
+      const conditions = { ...current.conditions[side] };
+      delete conditions[id];
+      return {
+        ...current,
+        teams: { ...current.teams, [side]: current.teams[side].filter((value) => value !== id) },
+        disabled: { ...current.disabled, [side]: current.disabled[side].filter((value) => value !== id) },
+        conditions: { ...current.conditions, [side]: conditions },
+      };
+    });
+  };
 
   const swapTeams = () => {
     setDrawerPokemon({ own: null, opponent: null });

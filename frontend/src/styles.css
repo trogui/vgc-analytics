@@ -185,18 +185,9 @@ main:has(.analysis-shell) { display: flex; flex-direction: column; height: calc(
 .panel-header h2 { margin: 0; font-size: 14px; font-weight: 700; }
 .panel-header span { color: var(--muted); font-size: 12px; font-weight: 600; }
 .panel-body { padding: 14px; }
-.results { position: sticky; top: 66px; }
+.results { position: sticky; top: 0; }
 
 .pokemon-roster { display: grid; gap: 10px; margin-bottom: 14px; }
-.empty-roster {
-  padding: 24px 16px;
-  border: 1px dashed var(--line-strong);
-  border-radius: var(--radius);
-  color: var(--muted);
-  text-align: center;
-  font-size: 13px;
-  font-weight: 500;
-}
 .pokemon-row {
   position: relative;
   min-height: 72px;
