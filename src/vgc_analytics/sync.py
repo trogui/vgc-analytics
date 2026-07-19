@@ -101,7 +101,6 @@ def sync_database(
             tournament_id = tournament["id"]
             payload = {
                 "tournament": tournament,
-                "details": client.get(f"/tournaments/{tournament_id}/details"),
                 "standings": client.get(f"/tournaments/{tournament_id}/standings"),
                 "pairings": client.get(f"/tournaments/{tournament_id}/pairings"),
             }

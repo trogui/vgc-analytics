@@ -19,7 +19,6 @@ def source_payload() -> dict:
             "players": 2,
             "organizerId": 42,
         },
-        "details": {"isOnline": True},
         "standings": [{
             "player": "source-account-123",
             "name": "Example Person",
@@ -80,15 +79,14 @@ def test_snapshot_sanitization_is_allowlisted_and_source_traceable():
     assert sanitized["tournaments"][0]["tournament"]["name"] == "Public Event"
 
 
-def test_legacy_database_with_source_ids_fails_closed(tmp_path):
+def test_legacy_database_with_identity_columns_fails_without_mutation(tmp_path):
     database = tmp_path / "legacy.duckdb"
     initialize(database)
     with connect(database) as connection:
-        connection.execute("""
-            INSERT INTO entries VALUES (
-                'event-1:source-account-123', 'event-1', 'source-account-123',
-                1, 1, 0, 0, FALSE, FALSE
-            )
-        """)
-    with pytest.raises(RuntimeError, match="Legacy database contains source player identifiers"):
+        connection.execute("ALTER TABLE entries ADD COLUMN player_name VARCHAR")
+        connection.execute("ALTER TABLE entries ADD COLUMN country VARCHAR")
+    with pytest.raises(RuntimeError, match="Legacy database has identity columns"):
         initialize(database)
+    with connect(database, read_only=True) as connection:
+        columns = {row[1] for row in connection.execute("PRAGMA table_info('entries')").fetchall()}
+    assert {"player_name", "country"} <= columns

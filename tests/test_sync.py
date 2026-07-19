@@ -31,8 +31,6 @@ def test_sync_discovers_appends_and_then_becomes_a_noop(database, tmp_path):
                 "game": "VGC", "format": "M-B", "players": 24, "organizerId": 1,
             }])
         endpoint = request.url.path.rsplit("/", 1)[-1]
-        if endpoint == "details":
-            return httpx.Response(200, json={"isOnline": True, "platform": "CHAMPIONS"})
         if endpoint == "standings":
             return httpx.Response(200, json=new_payload["standings"])
         if endpoint == "pairings":
@@ -49,6 +47,7 @@ def test_sync_discovers_appends_and_then_becomes_a_noop(database, tmp_path):
     assert first["discovered"] == 1
     assert first["inserted"] == 1
     assert first["pending"] == 0
+    assert not any(path.endswith("/details") for path in calls)
     assert len(list(raw.glob("*.json.gz"))) == 1
     with gzip.open(next(raw.glob("*.json.gz")), "rt", encoding="utf-8") as handle:
         stored = json.load(handle)
@@ -92,8 +91,6 @@ def test_unfinished_tournament_is_pending_not_ingested(database, tmp_path):
                 "id": "large", "name": "large", "date": "2026-07-01T10:00:00.000Z",
                 "game": "VGC", "format": "M-B", "players": 24,
             }])
-        if endpoint == "details":
-            return httpx.Response(200, json={})
         if endpoint == "standings":
             return httpx.Response(200, json=[{
                 "player": "active-a", "name": "A", "placing": None,

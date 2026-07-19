@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Mapping
 
 
-PAYLOAD_FIELDS = {"tournament", "details", "standings", "pairings"}
+PAYLOAD_FIELDS = {"tournament", "standings", "pairings"}
 TOURNAMENT_FIELDS = {"id", "name", "date", "game", "format", "players", "organizerId"}
 STANDING_FIELDS = {"player", "name", "country", "placing", "record", "decklist", "deck", "drop"}
 RECORD_FIELDS = {"wins", "losses", "ties"}
