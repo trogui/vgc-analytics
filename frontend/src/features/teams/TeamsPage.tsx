@@ -20,7 +20,7 @@ interface StoredState {
 
 const storageKey = "vgc-analytics-react-teams-v1";
 const initialState: StoredState = { mode: "basic", selected: [], conditions: {} };
-const emptyCondition = (): PokemonCondition => ({ moves: [], item: null, ability: null });
+const emptyCondition = (): PokemonCondition => ({ moves: [], item: null, ability: null, nature: null });
 
 export function TeamsPage() {
   const [state, setState] = useStoredState<StoredState>(storageKey, initialState);
@@ -78,7 +78,7 @@ export function TeamsPage() {
     try {
       const queryConditions = mode === "advanced" ? selected.flatMap((id) => {
         const condition = conditions[id] ?? emptyCondition();
-        return condition.moves.length || condition.item || condition.ability ? [{ pokemon_id: id, ...condition }] : [];
+        return condition.moves.length || condition.item || condition.ability || condition.nature ? [{ pokemon_id: id, ...condition }] : [];
       }) : [];
       const response = await api.searchTeams({
         mode,
@@ -106,7 +106,7 @@ export function TeamsPage() {
   const byId = new Map(species.map((pokemon) => [pokemon.id, pokemon]));
   const labels = (id: string) => {
     const condition = state.conditions[id];
-    return condition ? [...condition.moves, condition.item, condition.ability].filter(Boolean) as string[] : [];
+    return condition ? [...condition.moves, condition.item, condition.ability, condition.nature].filter(Boolean) as string[] : [];
   };
   const exact = state.selected.length === 6;
   const help = state.mode === "basic"
@@ -131,7 +131,7 @@ export function TeamsPage() {
         <section id="team-search" className="team-search-panel" aria-labelledby="team-query-title">
           <div className="search-mode-switch" aria-label="Search type">
             <button type="button" aria-pressed={state.mode === "basic"} onClick={() => setMode("basic")}><b>1</b><span><strong>Basic search</strong><em>Six-Pokémon compositions from a selection of 1–6.</em></span></button>
-            <button type="button" aria-pressed={state.mode === "advanced"} onClick={() => setMode("advanced")}><b>2</b><span><strong>Advanced search</strong><em>Real team lists with moves, items, and abilities.</em></span></button>
+            <button type="button" aria-pressed={state.mode === "advanced"} onClick={() => setMode("advanced")}><b>2</b><span><strong>Advanced search</strong><em>Real team lists with moves, items, abilities, and natures.</em></span></button>
           </div>
           <div className="team-query-body">
             <div className="team-query-header"><h2 id="team-query-title">Pokémon the team must include</h2><span>{state.selected.length}/6</span></div>

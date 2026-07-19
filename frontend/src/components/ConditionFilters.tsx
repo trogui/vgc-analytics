@@ -3,7 +3,7 @@ import { useState } from "react";
 import { formatPercent } from "../format";
 import type { PokemonCondition, PokemonOptions, UsageOption } from "../types";
 
-type ConditionType = "moves" | "item" | "ability";
+type ConditionType = "moves" | "item" | "ability" | "nature";
 
 interface GroupProps {
   title: string;
@@ -57,7 +57,7 @@ interface Props {
 }
 
 export function ConditionFilters({ options, value, onChange, expandable = false }: Props) {
-  const toggleSingle = (type: "item" | "ability", option: string, checked: boolean) =>
+  const toggleSingle = (type: "item" | "ability" | "nature", option: string, checked: boolean) =>
     onChange({ ...value, [type]: checked ? option : null });
 
   return (
@@ -92,6 +92,15 @@ export function ConditionFilters({ options, value, onChange, expandable = false 
         expandable={expandable}
         onToggle={(option, checked) => toggleSingle("ability", option, checked)}
         onClear={() => onChange({ ...value, ability: null })}
+      />
+      <FilterGroup
+        title="Nature"
+        type="nature"
+        options={options.natures}
+        selected={value.nature ? [value.nature] : []}
+        expandable={expandable}
+        onToggle={(option, checked) => toggleSingle("nature", option, checked)}
+        onClear={() => onChange({ ...value, nature: null })}
       />
     </>
   );

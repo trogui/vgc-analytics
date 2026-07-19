@@ -14,6 +14,7 @@ class PokemonCondition(BaseModel):
     moves: list[str] = Field(default_factory=list, max_length=4)
     item: str | None = None
     ability: str | None = None
+    nature: str | None = None
 
     @model_validator(mode="after")
     def normalize(self):
@@ -21,6 +22,7 @@ class PokemonCondition(BaseModel):
         self.moves = sorted({value.strip() for value in self.moves if value.strip()})
         self.item = self.item.strip() if self.item and self.item.strip() else None
         self.ability = self.ability.strip() if self.ability and self.ability.strip() else None
+        self.nature = self.nature.strip() if self.nature and self.nature.strip() else None
         return self
 
 
@@ -114,6 +116,9 @@ def _team_conditions(alias: str, team_filter: TeamFilter, parameters: list[objec
         if pokemon.ability:
             pokemon_conditions.append(f"lower({pokemon_alias}.ability) = lower(?)")
             parameters.append(pokemon.ability)
+        if pokemon.nature:
+            pokemon_conditions.append(f"lower({pokemon_alias}.nature) = lower(?)")
+            parameters.append(pokemon.nature)
         for move in pokemon.moves:
             pokemon_conditions.append(f"""
                 EXISTS (
@@ -237,6 +242,22 @@ class AnalyticsEngine:
                 ORDER BY teams DESC, arg_max(value, teams)
                 LIMIT 10
             """, [*filter_parameters, pokemon_id, max(2, round(teams * 0.001))]).fetchall()
+            natures = connection.execute(f"""
+                WITH eligible_pokemon AS ({eligible_pokemon}),
+                variants AS (
+                    SELECT lower(trim(nature)) AS normalized, nature AS value,
+                           COUNT(DISTINCT entry_id) AS teams
+                    FROM eligible_pokemon
+                    WHERE pokemon_id = ? AND nature IS NOT NULL AND nature != ''
+                    GROUP BY normalized, value
+                )
+                SELECT arg_max(value, teams), SUM(teams) AS teams
+                FROM variants
+                GROUP BY normalized
+                HAVING teams >= ?
+                ORDER BY teams DESC, arg_max(value, teams)
+                LIMIT 10
+            """, [*filter_parameters, pokemon_id, max(2, round(teams * 0.001))]).fetchall()
 
         def values(rows):
             return [
@@ -251,6 +272,7 @@ class AnalyticsEngine:
             "moves": values(moves),
             "items": values(items),
             "abilities": values(abilities),
+            "natures": values(natures),
         }
 
     def search_teams(self, query: TeamSearchQuery) -> dict[str, object]:
