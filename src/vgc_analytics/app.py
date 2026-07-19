@@ -74,6 +74,3 @@ def create_app(database_path: str | Path | None = None, raw_directory: str | Pat
 
     app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
     return app
-
-
-app = create_app()

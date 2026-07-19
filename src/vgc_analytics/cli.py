@@ -7,6 +7,7 @@ import webbrowser
 
 import uvicorn
 
+from .app import create_app
 from .ingest import build_from_snapshot
 from .sync import sync_database
 from .validate import validate_database
@@ -44,8 +45,6 @@ def main() -> None:
         result = sync_database(arguments.database, arguments.raw)
         print(json.dumps(result, indent=2))
     elif arguments.command == "serve":
-        from .app import create_app
-
         if arguments.open:
             threading.Timer(0.8, lambda: webbrowser.open(f"http://{arguments.host}:{arguments.port}")).start()
         uvicorn.run(create_app(arguments.database), host=arguments.host, port=arguments.port)
