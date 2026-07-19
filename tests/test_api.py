@@ -31,6 +31,7 @@ def test_api_exposes_dataset_and_analysis(database):
             assert options.status_code == 200
             assert options.json()["moves"][0]["value"] == "Protect"
             assert options.json()["items"][0]["value"] == "Basculegionite"
+            assert options.json()["natures"][0]["value"] == "Jolly"
 
             images = await client.get("/static/pokemon-images.json")
             assert images.status_code == 200
@@ -53,6 +54,7 @@ def test_api_exposes_dataset_and_analysis(database):
                         "moves": ["Protect"],
                         "item": "Basculegionite",
                         "ability": "Test Ability",
+                        "nature": "Jolly",
                     }],
                 },
                 "tournaments": {"min_players": 21},

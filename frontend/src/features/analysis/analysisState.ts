@@ -9,7 +9,7 @@ export interface AnalysisState {
   excludeMirrors: boolean;
 }
 
-export const emptyCondition = (): PokemonCondition => ({ moves: [], item: null, ability: null });
+export const emptyCondition = (): PokemonCondition => ({ moves: [], item: null, ability: null, nature: null });
 
 export const initialAnalysisState: AnalysisState = {
   mode: "basic",

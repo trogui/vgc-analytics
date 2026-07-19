@@ -142,6 +142,7 @@ def test_six_pokemon_search_is_exact_and_advanced_returns_sets(database):
                 "moves": ["Protect"],
                 "item": "Basculegionite",
                 "ability": "Test Ability",
+                "nature": "Jolly",
             }],
         ),
     ))
@@ -149,6 +150,22 @@ def test_six_pokemon_search_is_exact_and_advanced_returns_sets(database):
     assert advanced["results"][0]["pokemon"][0]["moves"] == ["Protect", "Test Move"]
     assert advanced["results"][0]["source"]["tournament"] in {"large", "small"}
     assert advanced["results"][0]["record"] == {"wins": 1, "losses": 1, "ties": 1}
+
+
+def test_nature_filter_is_case_insensitive_and_excludes_other_natures(database):
+    engine = AnalyticsEngine(database)
+
+    def query(nature):
+        return TeamSearchQuery(
+            mode="advanced",
+            team=TeamFilter(
+                contains=["basculegion"],
+                conditions=[{"pokemon_id": "basculegion", "nature": nature}],
+            ),
+        )
+
+    assert engine.search_teams(query("jOlLy"))["total"] == 2
+    assert engine.search_teams(query("Adamant"))["total"] == 0
 
 
 def test_tera_is_absent(database):

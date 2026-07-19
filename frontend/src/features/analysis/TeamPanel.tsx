@@ -52,7 +52,7 @@ export function TeamPanel({
           {team.map((id) => {
             const pokemon = byId.get(id);
             const enabled = !disabled.includes(id);
-            const condition = conditions[id] ?? { moves: [], item: null, ability: null };
+            const condition = conditions[id] ?? { moves: [], item: null, ability: null, nature: null };
             return (
               <article key={id} className={`pokemon-row${enabled ? "" : " is-disabled"}`}>
                 <input
@@ -76,6 +76,7 @@ export function TeamPanel({
                       <strong>{pokemon?.name ?? id}</strong>
                       {condition.item && <span className="condition-chip item-chip"><ItemName item={condition.item} /></span>}
                       {condition.ability && <span className="condition-chip">{condition.ability}</span>}
+                      {condition.nature && <span className="condition-chip">{condition.nature}</span>}
                     </span>
                     {condition.moves.length > 0 && <span className="condition-chips">
                       {condition.moves.map((move) => <MovePill key={move} move={move} className="condition-chip" />)}

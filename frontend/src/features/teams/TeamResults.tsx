@@ -89,7 +89,7 @@ export function TeamResults({
         ) : <span>Most used first</span>}
       </div>
       <div className="team-results">
-        {!result && <div className="team-empty">{mode === "basic" ? "Basic search discovers complete cores; open any result to inspect its exact variants." : "Advanced search lets you require moves, an item, or an ability on selected Pokémon."}</div>}
+        {!result && <div className="team-empty">{mode === "basic" ? "Basic search discovers complete cores; open any result to inspect its exact variants." : "Advanced search lets you require moves, an item, an ability, or a nature on selected Pokémon."}</div>}
         {result && !result.results.length && <div className="team-empty">No teams match all filters.</div>}
         {result?.results.map((item, index) => {
           if (mode === "basic") return (
@@ -136,7 +136,7 @@ export function TeamResults({
                   return <TeamSetCard
                     key={pokemon.id}
                     pokemon={pokemon}
-                    requested={conditions[pokemon.id] ?? { moves: [], item: null, ability: null }}
+                    requested={conditions[pokemon.id] ?? { moves: [], item: null, ability: null, nature: null }}
                     imageIds={imageIds}
                     difference={relative ? pokemonDifference : undefined}
                     unchanged={relative && !pokemonDifference}

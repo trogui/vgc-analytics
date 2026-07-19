@@ -22,12 +22,14 @@ export interface PokemonOptions {
   moves: UsageOption[];
   items: UsageOption[];
   abilities: UsageOption[];
+  natures: UsageOption[];
 }
 
 export interface PokemonCondition {
   moves: string[];
   item: string | null;
   ability: string | null;
+  nature: string | null;
 }
 
 export interface Health {

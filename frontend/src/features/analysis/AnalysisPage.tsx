@@ -56,7 +56,7 @@ export function AnalysisPage() {
     const timer = window.setTimeout(async () => {
       const queryConditions = (side: Side) => activeTeam(state, side).flatMap((id) => {
         const condition = conditionFor(state, side, id);
-        return condition.moves.length || condition.item || condition.ability ? [{ pokemon_id: id, ...condition }] : [];
+        return condition.moves.length || condition.item || condition.ability || condition.nature ? [{ pokemon_id: id, ...condition }] : [];
       });
       const versus = state.mode === "versus";
       const query: AnalysisRequest = {
@@ -199,7 +199,7 @@ export function AnalysisPage() {
             species={species}
             imageIds={imageIds}
             options={drawerPokemon.own ? options[drawerPokemon.own] : undefined}
-            condition={drawerPokemon.own ? conditionFor(state, "own", drawerPokemon.own) : { moves: [], item: null, ability: null }}
+            condition={drawerPokemon.own ? conditionFor(state, "own", drawerPokemon.own) : { moves: [], item: null, ability: null, nature: null }}
             error={drawerPokemon.own ? drawerErrors[drawerPokemon.own] : null}
             onChange={(value) => drawerPokemon.own && setCondition("own", drawerPokemon.own, value)}
             onClose={() => setDrawerPokemon((current) => ({ ...current, own: null }))}
@@ -216,7 +216,7 @@ export function AnalysisPage() {
             species={species}
             imageIds={imageIds}
             options={drawerPokemon.opponent ? options[drawerPokemon.opponent] : undefined}
-            condition={drawerPokemon.opponent ? conditionFor(state, "opponent", drawerPokemon.opponent) : { moves: [], item: null, ability: null }}
+            condition={drawerPokemon.opponent ? conditionFor(state, "opponent", drawerPokemon.opponent) : { moves: [], item: null, ability: null, nature: null }}
             error={drawerPokemon.opponent ? drawerErrors[drawerPokemon.opponent] : null}
             onChange={(value) => drawerPokemon.opponent && setCondition("opponent", drawerPokemon.opponent, value)}
             onClose={() => setDrawerPokemon((current) => ({ ...current, opponent: null }))}
