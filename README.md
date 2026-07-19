@@ -1,69 +1,64 @@
 # VGC Regulation M-B Analytics
 
-Motor analítico determinista para los torneos públicos de Pokémon VGC M-B en
-Play Limitless. Regulation M-B utiliza Megaevolución: **tera no forma parte del
-modelo**. Las megapiedras permanecen en el campo `item` de cada Pokémon.
+A deterministic analytics engine for public Pokémon VGC Regulation M-B
+tournaments hosted on Play Limitless. Regulation M-B uses Mega Evolution:
+**Terastallization is not part of the model**. Mega Stones remain in each
+Pokémon's `item` field.
 
-La aplicación permite analizar win rates entre núcleos y buscar composiciones
-o teamlists concretas. Cuando se seleccionan seis Pokémon, las variantes de set
-se pueden comparar contra una referencia por movimientos, objeto, habilidad y
-naturaleza.
+The application analyzes win rates between team cores and searches for specific
+compositions or teamlists. When six Pokémon are selected, set variants can be
+compared against a reference by moves, item, ability, and nature.
 
-## Requisitos
+## Requirements
 
-- Python 3.12 o superior.
+- Python 3.12 or later.
 - [`uv`](https://docs.astral.sh/uv/).
-- Node.js 22 o superior y npm, solo para modificar el frontend.
+- Node.js 22 or later and npm, only when modifying the frontend.
 
-## Abrir la aplicación
+## Run the application
 
-Para abrir la aplicación completa con un solo comando:
+Start the complete application with one command:
 
 ```bash
 ./run.command
 ```
 
-En macOS también puedes abrir `run.command` con doble clic.
+On macOS, you can also open `run.command` by double-clicking it.
 
-La aplicación se abre en `http://127.0.0.1:8765`. El botón **Refresh** busca
-torneos nuevos, descarga `details`, `standings` y `pairings`, y solo ingiere los
-que ya tienen resultados finales.
+The application opens at `http://127.0.0.1:8765`.
 
-El servidor está diseñado para ejecutarse localmente y no implementa
-autenticación. No debe exponerse directamente a Internet.
+The server is designed to run locally and does not implement authentication. Do
+not expose it directly to the internet.
 
-## Comandos
+## Commands
 
 ```bash
-# Reconstruir desde el snapshot inicial
+# Rebuild the database from the bundled snapshot
 uv run vgc-analytics build \
   --snapshot data/seed.json.gz \
   --database data/vgc_mb.duckdb
 
-# Añadir torneos finalizados nuevos
-uv run vgc-analytics sync --database data/vgc_mb.duckdb --raw data/raw
-
-# Verificar invariantes estructurales y estadísticas
+# Verify structural and statistical invariants
 uv run vgc-analytics verify --database data/vgc_mb.duckdb
 
-# Tests deterministas
+# Run deterministic tests
 uv run pytest
 ```
 
-## Desarrollo del frontend
+## Frontend development
 
-La interfaz está implementada con React, TypeScript y Vite. FastAPI continúa
-sirviendo la API y el build de producción como una única aplicación.
+The interface uses React, TypeScript, and Vite. FastAPI serves both the API and
+the production frontend as a single application.
 
 ```bash
 ./dev.command
 ```
 
-El script prepara las dependencias, levanta FastAPI y abre Vite con recarga
-automática. `Ctrl+C` detiene ambos procesos.
+The script installs dependencies, starts FastAPI, and opens Vite with hot
+reload. Press `Ctrl+C` to stop both processes.
 
-Antes de publicar cambios del frontend, genera los assets versionados que
-FastAPI sirve desde el paquete Python:
+Before publishing frontend changes, generate the versioned assets served by the
+Python package:
 
 ```bash
 cd frontend
@@ -71,65 +66,51 @@ npm test
 npm run build
 ```
 
-## Semántica de los cálculos
+## Calculation semantics
 
-Cada partida válida produce dos filas en `match_sides`, una desde cada lado.
-Una victoria de A sobre B se representa como `A: W/1.0` y `B: L/0.0`; un
-empate produce dos filas `T/0.5`.
+Each valid match produces two rows in `match_sides`, one from each player's
+perspective. A win by A over B is represented as `A: W/1.0` and `B: L/0.0`; a
+draw produces two `T/0.5` rows.
 
-El win rate mostrado es `victorias / (victorias + derrotas)`. Los empates se
-conservan en el record, pero no alteran ese porcentaje.
+The displayed win rate is `wins / (wins + losses)`. Draws remain in the record
+but do not affect that percentage.
 
-Se excluyen por defecto byes, dobles derrotas, resultados inválidos y partidas
-en las que alguno de los dos jugadores no tiene una teamlist pública válida.
-Los problemas de origen se conservan en `data_quality_issues`.
+Byes, double losses, invalid results, and matches where either player lacks a
+valid public teamlist are excluded by default. Source data problems are retained
+in `data_quality_issues`.
 
-## Consulta de cores
+## Core queries
 
-Los cores se consultan directamente sobre los seis Pokémon normalizados de
-cada equipo. Por ejemplo:
+Cores are queried directly from the six normalized Pokémon on each team. For
+example:
 
 ```text
 Basculegion + Sneasler + Kingambit
 vs Tyranitar + Excadrill
-solo torneos con al menos 21 participantes
+only tournaments with at least 21 players
 ```
 
-se resuelve filtrando los Pokémon de cada lado y agregando `match_sides`. No
-se almacenan combinaciones derivadas y el orden de los Pokémon no altera el
-resultado.
+is resolved by filtering each side's Pokémon and aggregating `match_sides`. No
+derived combinations are stored, and Pokémon order does not affect the result.
 
-## Garantías del Refresh
+## Data and external services
 
-- Append-only por `tournament_id`.
-- Transacción completa por torneo.
-- Idempotente: repetir un Refresh no duplica filas.
-- La frontera solo avanza cuando el torneo queda ingerido.
-- Los torneos activos se vuelven a comprobar en el siguiente Refresh.
-- Cada respuesta nueva se conserva comprimida en `data/raw` usando SHA-256.
-- Si una validación o inserción falla, DuckDB hace rollback y el torneo se
-  vuelve a intentar en el siguiente Refresh.
+`data/seed.json.gz` is a reproducible snapshot collected on **July 18, 2026**
+through the documented [Play Limitless tournament
+endpoints](https://docs.limitlesstcg.com/developer/tournaments). It contains 192
+public VGC Regulation M-B tournaments held between June 20 and July 18, 2026.
+The snapshot retains standings, pairings, and teamlists, but removes player
+names and countries and replaces player identifiers with tournament-local
+aliases using `scripts/anonymize_seed.py`.
 
-## Datos y servicios externos
+The data comes from Play Limitless and remains subject to its [Terms of
+Service](https://play.limitlesstcg.com/tos) and [Privacy
+Policy](https://play.limitlesstcg.com/privacy). Any license applied to this
+repository's code grants no additional rights over third-party data. Generated
+DuckDB databases and downloaded API responses are excluded from Git.
 
-`data/seed.json.gz` es un snapshot reproducible obtenido el **18 de julio de
-2026** mediante los [endpoints documentados de torneos de Play
-Limitless](https://docs.limitlesstcg.com/developer/tournaments). Reúne 192
-torneos públicos de VGC M-B con fecha entre el 20 de junio y el 18 de julio de
-2026. Conserva clasificaciones, emparejamientos y teamlists, pero elimina los
-nombres y países de los jugadores y sustituye sus identificadores por aliases
-locales a cada torneo mediante `scripts/anonymize_seed.py`.
+Pokémon images are loaded in the browser from a pinned version of the [PokéAPI
+sprites repository](https://github.com/PokeAPI/sprites) through jsDelivr.
 
-Los datos proceden de Play Limitless y siguen sujetos a sus [términos de
-servicio](https://play.limitlesstcg.com/tos) y [política de
-privacidad](https://play.limitlesstcg.com/privacy). Cualquier licencia aplicada
-al código de este repositorio no concede derechos adicionales sobre estos datos
-de terceros. La base DuckDB y las respuestas descargadas durante **Refresh** se
-generan localmente y están excluidas de Git.
-
-Las imágenes de Pokémon se cargan en el navegador desde una versión fijada del
-repositorio de sprites de [PokéAPI](https://github.com/PokeAPI/sprites) a través
-de jsDelivr.
-
-Este es un proyecto comunitario no oficial y no está afiliado con Nintendo,
-Game Freak, The Pokémon Company, Play Limitless ni PokéAPI.
+This is an unofficial community project and is not affiliated with Nintendo,
+Game Freak, The Pokémon Company, Play Limitless, or PokéAPI.
