@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from vgc_analytics.database import connect, initialize
+from vgc_analytics.database import PRIVACY_SCHEMA_VERSION, connect, initialize
 from vgc_analytics.privacy import sanitize_snapshot, sanitize_tournament_payload
 
 
@@ -90,3 +90,50 @@ def test_legacy_database_with_identity_columns_fails_without_mutation(tmp_path):
     with connect(database, read_only=True) as connection:
         columns = {row[1] for row in connection.execute("PRAGMA table_info('entries')").fetchall()}
     assert {"player_name", "country"} <= columns
+
+
+def test_populated_unmarked_database_fails_without_mutation(tmp_path):
+    database = tmp_path / "unmarked.duckdb"
+    initialize(database)
+    with connect(database) as connection:
+        connection.execute("DROP TABLE app_metadata")
+        connection.execute("""
+            INSERT INTO entries VALUES (
+                'entry-1', 'event-1', 'source-account-123', 1, 1, 0, 0,
+                false, false
+            )
+        """)
+
+    with pytest.raises(RuntimeError, match="missing the current privacy schema version"):
+        initialize(database)
+
+    with connect(database, read_only=True) as connection:
+        player_id = connection.execute(
+            "SELECT player_id FROM entries WHERE entry_id = 'entry-1'"
+        ).fetchone()[0]
+        metadata_tables = connection.execute("""
+            SELECT COUNT(*) FROM information_schema.tables
+            WHERE table_schema = 'main' AND table_name = 'app_metadata'
+        """).fetchone()[0]
+    assert player_id == "source-account-123"
+    assert metadata_tables == 0
+
+
+def test_populated_database_with_current_privacy_marker_is_accepted(tmp_path):
+    database = tmp_path / "marked.duckdb"
+    initialize(database)
+    with connect(database) as connection:
+        connection.execute("""
+            INSERT INTO entries VALUES (
+                'entry-1', 'event-1', 'player-0001', 1, 1, 0, 0,
+                false, false
+            )
+        """)
+
+    initialize(database)
+
+    with connect(database, read_only=True) as connection:
+        marker = connection.execute("""
+            SELECT value FROM app_metadata WHERE key = 'privacy_schema_version'
+        """).fetchone()[0]
+    assert marker == PRIVACY_SCHEMA_VERSION

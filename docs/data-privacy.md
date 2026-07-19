@@ -15,7 +15,9 @@ The public dataset and incremental pipeline are pseudonymized, not anonymous:
 
 The sanitizer uses explicit source-field allowlists and fails closed when an
 unexpected field appears. It runs before a payload is written to `data/raw/` or
-normalized into DuckDB.
+normalized into DuckDB. Populated databases must also carry the current privacy
+schema-version marker; unmarked legacy databases are rejected without mutation
+and must be rebuilt from the pseudonymized seed.
 
 Generated databases and raw payloads are excluded from Git. Legacy local
 artifacts created before this policy may contain identity fields and must be

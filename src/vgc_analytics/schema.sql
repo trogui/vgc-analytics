@@ -1,3 +1,8 @@
+CREATE TABLE IF NOT EXISTS app_metadata (
+    key VARCHAR PRIMARY KEY,
+    value VARCHAR NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS tournaments (
     tournament_id VARCHAR PRIMARY KEY,
     name VARCHAR NOT NULL,
