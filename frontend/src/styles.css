@@ -106,7 +106,7 @@ button { color: inherit; cursor: pointer; }
 .settings-check input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); }
 .settings-body > .check-row { margin: 0; padding-top: 16px; border-top: 1px solid var(--line); }
 main { max-width: 1800px; margin: 0 auto; padding: 24px 20px 48px; }
-main:has(.analysis-shell) { display: flex; flex: 1; flex-direction: column; min-height: 0; padding-bottom: 12px; overflow: hidden; }
+main:has(.analysis-shell) { display: flex; flex: 1; flex-direction: column; width: 100%; min-height: 0; padding-bottom: 12px; overflow: hidden; }
 .view-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 16px; }
 .source-data-notice {
   display: flex;
