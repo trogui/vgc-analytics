@@ -217,7 +217,7 @@ main:has(.analysis-shell) { display: flex; flex: 1; flex-direction: column; min-
 .panel-body { padding: 14px; }
 .results { position: sticky; top: 0; }
 
-.pokemon-roster { display: grid; gap: 10px; margin-bottom: 14px; }
+.pokemon-roster { display: grid; width: 100%; min-width: 0; gap: 10px; margin-bottom: 14px; }
 .pokemon-row {
   position: relative;
   min-height: 72px;
@@ -595,7 +595,7 @@ select:focus, input:focus, button:focus-visible { outline: 2px solid #93c5fd; ou
 .team-query-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 10px; }
 .team-query-header h2 { margin: 0; font-size: 13px; font-weight: 700; }
 .team-query-header span { color: var(--muted); font-size: 11px; font-weight: 600; }
-.team-selection { display: flex; flex-wrap: wrap; gap: 8px; min-height: 70px; }
+.team-selection { display: flex; flex-wrap: wrap; width: 100%; min-width: 0; gap: 8px; min-height: 70px; }
 .team-selected-pokemon {
   position: relative;
   display: grid;
