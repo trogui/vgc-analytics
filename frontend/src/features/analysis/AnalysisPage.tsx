@@ -187,7 +187,7 @@ export function AnalysisPage() {
         <div className="view-header">
           <h1>Pokémon and core analysis</h1>
           <div className="view-actions">
-            {state.mode === "versus" && <button id="swap-teams" type="button" aria-label="Swap your team and the opponent team" onClick={swapTeams}><span aria-hidden="true">⇄</span> Swap teams</button>}
+            <button id="swap-teams" className={state.mode === "versus" ? "" : "is-placeholder"} type="button" disabled={state.mode !== "versus"} aria-hidden={state.mode !== "versus"} aria-label="Swap your team and the opponent team" onClick={swapTeams}><span aria-hidden="true">⇄</span> Swap teams</button>
             <div className="mode-switch" aria-label="Analysis mode">
               <button type="button" aria-pressed={state.mode === "basic"} onClick={() => setMode("basic")}>Basic</button>
               <button type="button" aria-pressed={state.mode === "versus"} onClick={() => setMode("versus")}>Versus</button>

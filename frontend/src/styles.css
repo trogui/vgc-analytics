@@ -148,6 +148,7 @@ main:has(.analysis-shell) { display: flex; flex: 1; flex-direction: column; widt
   font-weight: 600;
 }
 #swap-teams:hover { border-color: var(--accent); color: var(--accent); }
+#swap-teams.is-placeholder { visibility: hidden; pointer-events: none; }
 .mode-switch {
   display: inline-flex;
   padding: 2px;
