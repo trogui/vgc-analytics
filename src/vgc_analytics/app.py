@@ -14,14 +14,18 @@ from .engine import AnalysisQuery, AnalyticsEngine, TeamSearchQuery, TournamentF
 from .sync import sync_database
 
 
+def read_only_mode() -> bool:
+    """Return whether this process must expose analytics without mutations."""
+    return os.getenv("VGC_READ_ONLY", "").strip() == "1"
+
+
 def create_app(database_path: str | Path | None = None, raw_directory: str | Path | None = None) -> FastAPI:
     path = Path(database_path or os.getenv("VGC_DATABASE", "data/vgc_mb.duckdb"))
-    raw_path = Path(raw_directory or os.getenv("VGC_RAW", "data/raw"))
-    if path.exists():
+    is_read_only = read_only_mode()
+    if path.exists() and not is_read_only:
         initialize(path)
     app = FastAPI(title="VGC Analytics", version="0.1.0")
     engine = AnalyticsEngine(path)
-    refresh_lock = threading.Lock()
     static_path = files("vgc_analytics").joinpath("static")
 
     @app.get("/", response_class=HTMLResponse, include_in_schema=False)
@@ -63,14 +67,18 @@ def create_app(database_path: str | Path | None = None, raw_directory: str | Pat
     def search_teams(query: TeamSearchQuery):
         return engine.search_teams(query)
 
-    @app.post("/api/refresh")
-    def refresh():
-        if not refresh_lock.acquire(blocking=False):
-            raise HTTPException(409, "A refresh is already running")
-        try:
-            return sync_database(path, raw_path)
-        finally:
-            refresh_lock.release()
+    if not is_read_only:
+        raw_path = Path(raw_directory or os.getenv("VGC_RAW", "data/raw"))
+        refresh_lock = threading.Lock()
+
+        @app.post("/api/refresh")
+        def refresh():
+            if not refresh_lock.acquire(blocking=False):
+                raise HTTPException(409, "A refresh is already running")
+            try:
+                return sync_database(path, raw_path)
+            finally:
+                refresh_lock.release()
 
     app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
     return app
