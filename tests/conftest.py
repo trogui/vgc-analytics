@@ -21,8 +21,6 @@ def pokemon(pokemon_id: str, *, item: str | None = None) -> dict:
 def standing(player: str, team: list[str] | None, placing: int) -> dict:
     return {
         "player": player,
-        "name": player.upper(),
-        "country": "ES",
         "placing": placing,
         "record": {"wins": 1, "losses": 1, "ties": 0},
         "drop": None,
@@ -63,25 +61,25 @@ def database(tmp_path):
         "large",
         24,
         [
-            standing("a", TEAM_A, 1),
-            standing("b", TEAM_B, 2),
-            standing("c", TEAM_C, 3),
-            standing("unknown", None, 4),
+            standing("player-0001", TEAM_A, 1),
+            standing("player-0002", TEAM_B, 2),
+            standing("player-0003", TEAM_C, 3),
+            standing("player-0004", None, 4),
         ],
         [
-            {"player1": "a", "player2": "b", "winner": "a"},
-            {"player1": "a", "player2": "c", "winner": "c"},
-            {"player1": "c", "player2": "b", "winner": 0},
-            {"player1": "a", "player2": "", "winner": "a"},
-            {"player1": "b", "player2": "unknown", "winner": "b"},
-            {"player1": "a", "player2": "b", "winner": -1},
+            {"player1": "player-0001", "player2": "player-0002", "winner": "player-0001"},
+            {"player1": "player-0001", "player2": "player-0003", "winner": "player-0003"},
+            {"player1": "player-0003", "player2": "player-0002", "winner": 0},
+            {"player1": "player-0001", "player2": "", "winner": "player-0001"},
+            {"player1": "player-0002", "player2": "player-0004", "winner": "player-0002"},
+            {"player1": "player-0001", "player2": "player-0002", "winner": -1},
         ],
     )
     small = payload(
         "small",
         10,
-        [standing("a2", TEAM_C, 2), standing("b2", TEAM_D, 1)],
-        [{"player1": "a2", "player2": "b2", "winner": "b2"}],
+        [standing("player-0001", TEAM_C, 2), standing("player-0002", TEAM_D, 1)],
+        [{"player1": "player-0001", "player2": "player-0002", "winner": "player-0002"}],
     )
     with connect(path) as connection:
         assert ingest_payload(connection, large)

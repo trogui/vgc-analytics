@@ -283,7 +283,7 @@ class AnalyticsEngine:
         group_column = "composition_key" if query.mode == "basic" else "open_sheet_key"
         eligible = f"""
             SELECT team.entry_id, team.composition_key, team.open_sheet_key,
-                   e.player_name, e.final_placing,
+                   e.final_placing,
                    t.tournament_id, t.name AS tournament_name,
                    CAST(t.tournament_date AS DATE) AS tournament_date
             FROM teams team
@@ -317,7 +317,7 @@ class AnalyticsEngine:
                 WHERE ms.competitive AND ms.analyzable
                 GROUP BY eligible.{group_column}
             )
-            SELECT ranked.*, eligible.player_name, eligible.final_placing,
+            SELECT ranked.*, eligible.final_placing,
                    eligible.tournament_name, records.wins, records.losses, records.ties
             FROM ranked
             JOIN eligible ON eligible.entry_id = ranked.representative_entry_id
@@ -364,7 +364,7 @@ class AnalyticsEngine:
             ))
 
         results = []
-        for key, occurrences, tournaments, variants, latest_date, entry_id, _, matching_teams, player_name, placing, tournament_name, wins, losses, ties in rows:
+        for key, occurrences, tournaments, variants, latest_date, entry_id, _, matching_teams, placing, tournament_name, wins, losses, ties in rows:
             wins, losses, ties = wins or 0, losses or 0, ties or 0
             decisive = wins + losses
             result = {
@@ -380,7 +380,6 @@ class AnalyticsEngine:
             }
             if query.mode == "advanced":
                 result["source"] = {
-                    "player": player_name,
                     "placing": placing,
                     "tournament": tournament_name,
                 }

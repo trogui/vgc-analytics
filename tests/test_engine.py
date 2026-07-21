@@ -149,6 +149,7 @@ def test_six_pokemon_search_is_exact_and_advanced_returns_sets(database):
     assert advanced["total"] == 2
     assert advanced["results"][0]["pokemon"][0]["moves"] == ["Protect", "Test Move"]
     assert advanced["results"][0]["source"]["tournament"] in {"large", "small"}
+    assert "player" not in advanced["results"][0]["source"]
     assert advanced["results"][0]["record"] == {"wins": 1, "losses": 1, "ties": 1}
 
 

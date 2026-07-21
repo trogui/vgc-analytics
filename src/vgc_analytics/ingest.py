@@ -10,6 +10,7 @@ from typing import Any, Iterable
 import pyarrow as pa
 
 from .database import connect, initialize
+from .privacy import sanitize_tournament_payload
 
 
 def canonical_json(value: Any) -> str:
@@ -77,8 +78,6 @@ def normalize_tournament(payload: dict[str, Any]) -> dict[str, list[dict[str, An
             "entry_id": current_entry_id,
             "tournament_id": tournament_id,
             "player_id": player_id,
-            "player_name": standing.get("name"),
-            "country": standing.get("country"),
             "final_placing": standing.get("placing"),
             "wins": record.get("wins"),
             "losses": record.get("losses"),
@@ -274,7 +273,7 @@ def build_from_snapshot(database_path: str | Path, snapshot_path: str | Path) ->
             snapshot["tournaments"],
             key=lambda value: (value["tournament"]["date"], value["tournament"]["id"]),
         ):
-            inserted += ingest_payload(connection, payload)
+            inserted += ingest_payload(connection, sanitize_tournament_payload(payload))
     with connect(database_path, read_only=True) as connection:
         counts = {
             table: connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
