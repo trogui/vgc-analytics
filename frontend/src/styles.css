@@ -809,7 +809,7 @@ select:focus, input:focus, button:focus-visible { outline: 2px solid #93c5fd; ou
   .pokemon-copy { padding: 6px 8px; }
   .pokemon-title-line { flex-wrap: nowrap; min-width: 0; overflow: hidden; }
   .pokemon-title-line strong, .pokemon-title-line .condition-chip { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-  .condition-chips { grid-template-columns: minmax(0,1fr); max-height: 24px; overflow: hidden; }
+  .condition-chips { grid-template-columns: minmax(0,1fr); }
   .pokemon-row > .remove { right: 6px; }
   .pokemon-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .picker-toolbar { grid-template-columns: 1fr; }
