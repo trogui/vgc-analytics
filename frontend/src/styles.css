@@ -714,6 +714,7 @@ select:focus, input:focus, button:focus-visible { outline: 2px solid #93c5fd; ou
 }
 @media (max-width: 1100px) {
   body:has(.analysis-shell) { height: auto; overflow: auto; }
+  body:has(.analysis-shell) #root { height: auto; min-height: 100vh; }
   main:has(.analysis-shell) { height: auto; min-height: calc(100vh - 56px); overflow: visible; }
   .analysis-shell, .analysis-shell:has(#condition-drawer-own[aria-hidden="false"]), .analysis-shell:has(#condition-drawer-opponent[aria-hidden="false"]), .analysis-shell:has(#condition-drawer-own[aria-hidden="false"]):has(#condition-drawer-opponent[aria-hidden="false"]) { grid-template-columns: 1fr; }
   .analysis-grid.basic, .analysis-grid.versus { grid-template-columns: 1fr; align-content: start; max-height: none; overflow: visible; }
