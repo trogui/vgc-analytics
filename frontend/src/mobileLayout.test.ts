@@ -9,10 +9,11 @@ function rule(selector: string) {
   return match?.[1] ?? "";
 }
 
-test("selected content cannot make its roster or team container grow wider", () => {
+test("selected content cannot make its panel, roster, or team container grow wider", () => {
   for (const selector of [".pokemon-roster", ".team-selection"]) {
     const declarations = rule(selector);
     expect(declarations).toMatch(/width:\s*100%/);
     expect(declarations).toMatch(/min-width:\s*0/);
   }
+  expect(rule(".analysis-grid > .panel")).toMatch(/width:\s*100%/);
 });

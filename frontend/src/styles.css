@@ -201,6 +201,7 @@ main:has(.analysis-shell) { display: flex; flex: 1; flex-direction: column; min-
   background: var(--surface);
   box-shadow: var(--shadow-sm);
 }
+.analysis-grid > .panel { width: 100%; }
 .panel-header {
   min-height: 46px;
   display: flex;
