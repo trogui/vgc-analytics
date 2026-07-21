@@ -716,7 +716,7 @@ select:focus, input:focus, button:focus-visible { outline: 2px solid #93c5fd; ou
   body:has(.analysis-shell) { height: auto; overflow: auto; }
   main:has(.analysis-shell) { height: auto; min-height: calc(100vh - 56px); overflow: visible; }
   .analysis-shell, .analysis-shell:has(#condition-drawer-own[aria-hidden="false"]), .analysis-shell:has(#condition-drawer-opponent[aria-hidden="false"]), .analysis-shell:has(#condition-drawer-own[aria-hidden="false"]):has(#condition-drawer-opponent[aria-hidden="false"]) { grid-template-columns: 1fr; }
-  .analysis-grid.basic, .analysis-grid.versus { grid-template-columns: 1fr; max-height: none; overflow: visible; }
+  .analysis-grid.basic, .analysis-grid.versus { grid-template-columns: 1fr; align-content: start; max-height: none; overflow: visible; }
   .analysis-grid .results { order: -1; position: sticky; top: 64px; z-index: 4; box-shadow: 0 8px 20px rgba(15,23,42,.1); }
   .result-summary { grid-template-columns: minmax(120px,1.4fr) 1fr 1fr; }
   .result-primary { padding: 13px 16px; border-right: 1px solid var(--line); border-bottom: 0; }
