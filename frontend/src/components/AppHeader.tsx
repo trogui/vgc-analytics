@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 
 import type { AppSettings } from "../hooks/useSettings";
+import { useStoredState } from "../hooks/useStoredState";
 import { Modal } from "./Modal";
 
 interface Props {
@@ -23,6 +24,7 @@ export function AppHeader({
   onRefresh,
 }: Props) {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [dataNoticeDismissed, setDataNoticeDismissed] = useStoredState("vgc-analytics-data-notice-dismissed-v1", false);
 
   return (
     <>
@@ -38,15 +40,20 @@ export function AppHeader({
           {onRefresh && <button type="button" disabled={refreshing} onClick={onRefresh}>{refreshing ? "Refreshing…" : "Refresh"}</button>}
         </div>
       </header>
-      <p className="source-data-notice">
-        Uses public Play Limitless tournament data. Player names, countries, and source account IDs are not stored or displayed. Tournament, team-list, and match-result data remain traceable to public source events.
-      </p>
+      {!dataNoticeDismissed && <aside className="source-data-notice" aria-label="Data and privacy notice">
+        <span>Uses public Play Limitless tournament data. Player names, countries, and source account IDs are not stored or displayed.</span>
+        <button type="button" aria-label="Dismiss data and privacy notice" onClick={() => setDataNoticeDismissed(true)}>Dismiss</button>
+      </aside>}
       <Modal id="settings-dialog" open={settingsOpen} onClose={() => setSettingsOpen(false)}>
         <div className="picker-header">
           <h2>Settings</h2>
           <button type="button" aria-label="Close settings" onClick={() => setSettingsOpen(false)}>×</button>
         </div>
         <div className="settings-body">
+          <details className="data-notice-details">
+            <summary>Data and privacy information</summary>
+            <p>Uses public Play Limitless tournament data. Player names, countries, and source account IDs are not stored or displayed. Tournament, team-list, and match-result data remain traceable to public source events.</p>
+          </details>
           <label className="settings-field">
             <span>Minimum tournament players</span>
             <input
