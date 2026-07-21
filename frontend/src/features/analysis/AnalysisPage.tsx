@@ -11,6 +11,7 @@ import type { AnalysisResult, PokemonCondition, PokemonOptions, Side } from "../
 import { activeTeam, conditionFor, initialAnalysisState, type AnalysisState } from "./analysisState";
 import { ConditionDrawer } from "./ConditionDrawer";
 import { ResultsPanel } from "./ResultsPanel";
+import { ModeSwitch } from "./ModeSwitch";
 import { TeamPanel } from "./TeamPanel";
 
 const storageKey = "vgc-analytics-react-analysis-v1";
@@ -186,13 +187,7 @@ export function AnalysisPage() {
       <main>
         <div className="view-header">
           <h1>Pokémon and core analysis</h1>
-          <div className="view-actions">
-            <button id="swap-teams" className={state.mode === "versus" ? "" : "is-placeholder"} type="button" disabled={state.mode !== "versus"} aria-hidden={state.mode !== "versus"} aria-label="Swap your team and the opponent team" onClick={swapTeams}><span aria-hidden="true">⇄</span> Swap teams</button>
-            <div className="mode-switch" aria-label="Analysis mode">
-              <button type="button" aria-pressed={state.mode === "basic"} onClick={() => setMode("basic")}>Basic</button>
-              <button type="button" aria-pressed={state.mode === "versus"} onClick={() => setMode("versus")}>Versus</button>
-            </div>
-          </div>
+          <ModeSwitch mode={state.mode} onModeChange={setMode} onSwap={swapTeams} />
         </div>
         {analysisError && <p id="error" role="alert">{analysisError}</p>}
         <div id="analysis-shell" className="analysis-shell">
